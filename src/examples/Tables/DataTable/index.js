@@ -28,6 +28,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Icon from "@mui/material/Icon";
 import Autocomplete from "@mui/material/Autocomplete";
+import TableCell from '@mui/material/TableCell';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import Box from '@mui/material/Box';
+import MDButton from "components/MDButton";
+// import SearchBar from "material-ui-search-bar";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -38,6 +43,8 @@ import MDPagination from "components/MDPagination";
 // Material Dashboard 2 React example components
 import DataTableHeadCell from "examples/Tables/DataTable/DataTableHeadCell";
 import DataTableBodyCell from "examples/Tables/DataTable/DataTableBodyCell";
+
+
 
 function DataTable({
   entriesPerPage,
@@ -55,12 +62,50 @@ function DataTable({
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
 
+  // Prepare column options for search dropdown
+  const columnOptions = useMemo(() => {
+    return columns.map((col) => ({ label: col.Header, value: col.accessor }));
+  }, [columns]);
+
+  
+
+  // const tableInstance = useTable(
+  //   { columns, data, initialState: { pageIndex: 0 } },
+  //   useGlobalFilter,
+  //   useSortBy,
+  //   usePagination
+  // );
+
+  // Search input value state
+  const [search, setSearch] = useState("");
+  const [selectedColumn, setSelectedColumn] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const customGlobalFilter = (rows, columnIds, filterValue) => {
+    // If no filterValue or selectedColumn, return the original rows
+    if (!filterValue || !selectedColumn) return rows;
+  
+    return rows.filter(row => {
+      const cellValue = row.values[selectedColumn]; // Access cell value of the selected column
+  
+      // Ensure cellValue is a string before comparison
+      return String(cellValue).toLowerCase().includes(String(filterValue).toLowerCase());
+      // return String(cellValue).toLowerCase() === String(filterValue).toLowerCase();
+    });
+  };
+
   const tableInstance = useTable(
-    { columns, data, initialState: { pageIndex: 0 } },
+    {
+      columns,
+      data,
+      initialState: { pageIndex: 0 },
+      globalFilter: customGlobalFilter, // Use the custom filter here
+    },
     useGlobalFilter,
     useSortBy,
     usePagination
   );
+
+
 
   const {
     getTableProps,
@@ -108,18 +153,26 @@ function DataTable({
   // Setting value for the pagination input
   const handleInputPaginationValue = ({ target: value }) => gotoPage(Number(value.value - 1));
 
-  // Search input value state
-  const [search, setSearch] = useState(globalFilter);
+  
 
   // Search input state handle
-  const onSearchChange = useAsyncDebounce((value) => {
-    setGlobalFilter(value || undefined);
-  }, 100);
+  // const onSearchChange = useAsyncDebounce((value) => {
+  //   setGlobalFilter(value || undefined);
+  // }, 200);
+
+  // const onSearchChange = useAsyncDebounce((value) => {
+  //   // When search input is empty, reset the filter
+  //   if (!value) {
+  //     setGlobalFilter(""); // Reset to empty string
+  //   } else {
+  //     setGlobalFilter(value); // Set the search filter
+  //   }
+  // }, 200);
 
   // A function that sets the sorted value for the table
   const setSortedValue = (column) => {
     let sortedValue;
-
+    // console.log(column)
     if (isSorted && column.isSorted) {
       sortedValue = column.isSortedDesc ? "desc" : "asce";
     } else if (isSorted) {
@@ -130,6 +183,29 @@ function DataTable({
 
     return sortedValue;
   };
+
+
+  // const handleColumnChange = (event, newValue) => {
+  //   setSelectedColumn(newValue ? newValue.value : ""); // Set selected column
+  //   setSearch(""); // Clear the search term
+  //   setGlobalFilter(""); // Clear global filter
+  //   gotoPage(0);  // Reset to the first page
+  // };
+
+
+  const handleSearchClick = () => {
+    setGlobalFilter(searchQuery || undefined); // Apply the search query on button click
+  };
+
+
+  const handleSearchChange = (event) => {
+    const value = event.currentTarget.value;
+    setSearch(value); // Update search state as user types (not applied yet)
+  };
+
+
+ 
+  
 
   // Setting the entries starting point
   const entriesStart = pageIndex === 0 ? pageIndex + 1 : pageIndex * pageSize + 1;
@@ -169,17 +245,37 @@ function DataTable({
           )}
           {canSearch && (
             <MDBox width="12rem" ml="auto">
+              {/* Dropdown for selecting column */}
+              <Autocomplete
+                disableClearable
+                options={columnOptions}
+                onChange={(event, newValue) => {
+                  setSelectedColumn(newValue ? newValue.value : ""); // Set selected column
+                  setSearch(""); // Clear the search input when column changes
+                }}
+                size="small"
+                sx={{ width: "12rem", marginRight: "1rem" }}
+                renderInput={(params) => <MDInput {...params} placeholder="Select Column" />}
+              />
               <MDInput
                 placeholder="Search..."
-                value={search}
-                size="small"
-                fullWidth
-                onChange={({ currentTarget }) => {
-                  setSearch(search);
-                  onSearchChange(currentTarget.value);
-                }}
+                value={search} // Bind input to search state
+                onChange={handleSearchChange} // Handle input change (not applied yet)
               />
+              <MDButton
+                variant="contained"
+                color="info"
+                onClick={() => {
+                  setSearchQuery(search); // Set searchQuery state to trigger the search on button click
+                  handleSearchClick(); // Call search function
+                }}
+                sx={{ marginLeft: "1rem" }}
+              >
+                Search
+              </MDButton>
+             
             </MDBox>
+           
           )}
         </MDBox>
       ) : null}
@@ -191,16 +287,20 @@ function DataTable({
                 <DataTableHeadCell
                   key={idx}
                   {...column.getHeaderProps(isSorted && column.getSortByToggleProps())}
+                  // {...column.getHeaderProps(column.getSortByToggleProps())}
                   width={column.width ? column.width : "auto"}
                   align={column.align ? column.align : "left"}
                   sorted={setSortedValue(column)}
                 >
                   {column.render("Header")}
                 </DataTableHeadCell>
+                
               ))}
             </TableRow>
           ))}
+          
         </MDBox>
+       
         <TableBody {...getTableBodyProps()}>
           {page.map((row, key) => {
             prepareRow(row);

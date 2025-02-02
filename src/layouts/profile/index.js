@@ -21,10 +21,17 @@ import Divider from "@mui/material/Divider";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
-
+import GitHubIcon from "@mui/icons-material/GitHub";
+import ApiIcon from '@mui/icons-material/Api';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+
+
+// core ui icons
+import { CIcon } from '@coreui/icons-react';
+import { cibPostman } from '@coreui/icons';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -56,39 +63,56 @@ function Overview() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox mb={2} />
-      <Header>
+      <Header 
+        sx={{justifyContent: 'center'}}
+      >
         <MDBox mt={5} mb={3}>
           <Grid container spacing={1}>
-            <Grid item xs={12} md={6} xl={4}>
+            {/* <Grid item xs={12} md={6} xl={4}>
               <PlatformSettings />
-            </Grid>
-            <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
+            </Grid> */}
+            <Grid item xs={12} md={6} xl={6} sx={{ display: "flex"}}>
               <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
               <ProfileInfoCard
                 title="profile information"
-                description="Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
+                description="Hello World!"
                 info={{
-                  fullName: "Alec M. Thompson",
-                  mobile: "(44) 123 1234 123",
-                  email: "alecthompson@mail.com",
-                  location: "USA",
+                  fullName: "Đỗ Đăng Khoa",
+                  msv: "B21DCCN068",
+                  email: "khoadd2402@mail.com",
+                  location: "VN",
                 }}
                 social={[
                   {
-                    link: "https://www.facebook.com/CreativeTim/",
-                    icon: <FacebookIcon />,
-                    color: "facebook",
+                    link: "https://github.com/Khoa224",
+                    icon: <GitHubIcon />,
+                    color: "github",
                   },
                   {
-                    link: "https://twitter.com/creativetim",
-                    icon: <TwitterIcon />,
-                    color: "twitter",
+                    link: "https://www.postman.com/aviation-astronomer-68387962/91aa0408-abd6-48c3-aef3-628910af0149/request/so7ujx9/tm-kim",
+                    icon: <ApiIcon/>,
+                    color: "github",
                   },
                   {
-                    link: "https://www.instagram.com/creativetimofficial/",
-                    icon: <InstagramIcon />,
-                    color: "instagram",
+                    link: "https://drive.google.com/drive/folders/1J_3C9FxtVPnqmuD6XbiYHGCANj7AomWY?usp=sharing",
+                    icon: <PictureAsPdfIcon/>,
+                    color: "github",
                   },
+                  // {
+                  //   link: "https://www.facebook.com/CreativeTim/",
+                  //   icon: <FacebookIcon />,
+                  //   color: "facebook",
+                  // },
+                  // {
+                  //   link: "https://twitter.com/creativetim",
+                  //   icon: <TwitterIcon />,
+                  //   color: "twitter",
+                  // },
+                  // {
+                  //   link: "https://www.instagram.com/creativetimofficial/",
+                  //   icon: <InstagramIcon />,
+                  //   color: "instagram",
+                  // },
                 ]}
                 action={{ route: "", tooltip: "Edit Profile" }}
                 shadow={false}
@@ -96,11 +120,14 @@ function Overview() {
               <Divider orientation="vertical" sx={{ mx: 0 }} />
             </Grid>
             <Grid item xs={12} xl={4}>
-              <ProfilesList title="conversations" profiles={profilesListData} shadow={false} />
+              {/* <ProfilesList title="conversations" profiles={profilesListData} shadow={false} /> */}
+              <MDTypography variant="h6" fontWeight="medium">
+                  {/* Extra information about yourself  */}
+              </MDTypography>
             </Grid>
           </Grid>
         </MDBox>
-        <MDBox pt={2} px={2} lineHeight={1.25}>
+        {/* <MDBox pt={2} px={2} lineHeight={1.25}>
           <MDTypography variant="h6" fontWeight="medium">
             Projects
           </MDTypography>
@@ -193,9 +220,9 @@ function Overview() {
               />
             </Grid>
           </Grid>
-        </MDBox>
+        </MDBox> */}
       </Header>
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
 }
